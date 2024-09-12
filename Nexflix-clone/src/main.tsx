@@ -1,13 +1,14 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import { createGlobalStyle } from "styled-components";
-import { ThemeProvider } from "styled-components";
+import { createRoot } from "react-dom/client";
+import { Helmet, HelmetProvider } from "react-helmet-async";
+import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { darkTheme } from "./theme";
 import { RecoilRoot } from "recoil";
 import App from "./App";
 
 export const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
+
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -59,29 +60,34 @@ table {
   box-sizing: border-box;
 }
 body {
+  font-weight: 300;
   font-family: 'Source Sans Pro', sans-serif;
-  background-color:${(props) => props.theme.bgColor};
-  color:${(props) => props.theme.textColor}
+  color:black;
+  line-height: 1.2;
+  background:linear-gradient(135deg,#e09,#d0e);
 }
 a {
   text-decoration:none;
   color: inherit;
 }
-button{
-  border: none;
-  outline: none;
-  cursor: pointer;
-}
 `;
 
-ReactDOM.render(
-  <React.StrictMode>
+const container = document.getElementById("root") as HTMLElement;
+const root = createRoot(container);
+
+root.render(
+  <HelmetProvider>
+    <Helmet>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap"
+        rel="stylesheet"
+      />
+    </Helmet>
     <RecoilRoot>
       <ThemeProvider theme={darkTheme}>
         <GlobalStyle />
         <App />
       </ThemeProvider>
     </RecoilRoot>
-  </React.StrictMode>,
-  document.getElementById("root")
+  </HelmetProvider>
 );
