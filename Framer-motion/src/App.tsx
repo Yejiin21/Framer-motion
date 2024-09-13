@@ -3,81 +3,124 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
 const Wrapper = styled(motion.div)`
+  background-color: rgba(0, 0, 0, 0.11);
   height: 100vh;
   width: 100vw;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+  gap: 10px;
+  div:first-child,
+  div:last-child {
+    grid-column: span 2;
+  }
 `;
 
 const Box = styled(motion.div)`
-  width: 400px;
-  height: 200px;
-  background-color: rgba(0, 120, 250, 2);
-  border-radius: 40px;
-  position: absolute;
+  width: 100%;
+  height: 300px;
+  background-color: rgba(255, 255, 255, 1);
   display: flex;
-  top: 100px;
   justify-content: center;
   align-items: center;
-  font-size: 28px;
   box-shadow:
     0 2px 3px rgba(0, 0, 0, 0.1),
     0 10px 20px rgba(0, 0, 0, 0.06);
 `;
 
-const box = {
-  entry: (back: boolean) => ({
-    x: back ? -500 : 500,
-    opacity: 0,
-    scale: 0,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-    scale: 1,
-    trasition: {
-      duration: 0.2,
-    },
-  },
-  exit: (back: boolean) => ({
-    x: back ? 500 : -500,
-    opacity: 0,
-    scale: 0,
-    transition: {
-      duration: 0.3,
-    },
-  }),
-};
+const Circle = styled(motion.div)`
+  background-color: #00a5ff;
+  height: 100px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+  box-shadow:
+    0 2px 3px rgba(0, 0, 0, 0.1),
+    0 10px 20px rgba(0, 0, 0, 0.06);
+`;
+
+const Overlay = styled(motion.div)`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 function App() {
-  const [visible, setVisible] = useState(1);
-  const [back, setBack] = useState(false);
-  const nextPlease = () => {
-    setBack(false);
-    setVisible((prev) => (prev === 10 ? 10 : prev + 1));
-  };
-  const prevPlease = () => {
-    setBack(true);
-    setVisible((prev) => (prev === 0 ? 0 : prev - 1));
-  };
+  const [clicked, setClicked] = useState(false);
+  const [id, setId] = useState<null | string>(null);
+  const toggleClicked = () => setClicked((prev) => !prev);
   return (
     <Wrapper>
-      <AnimatePresence exitBeforeEnter custom={back}>
+      <Grid>
         <Box
-          custom={back}
-          variants={box}
-          initial="entry"
-          animate="center"
-          exit="exit"
-          key={visible}
+          onClick={() => setId("1")}
+          layoutId="1"
+          style={{ position: "relative" }}
+          whileHover={{
+            scale: 1.05,
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+          }}
+        />
+        <Box
+          onClick={() => setId("2")}
+          layoutId="2"
+          style={{ position: "relative" }}
+          whileHover={{
+            scale: 1.05,
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+          }}
         >
-          {visible}
+          {!clicked ? <Circle layoutId="circle" /> : null}
         </Box>
+        <Box
+          onClick={() => setId("3")}
+          layoutId="3"
+          style={{ position: "relative" }}
+          whileHover={{
+            scale: 1.05,
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+          }}
+        >
+          {clicked ? <Circle layoutId="circle" /> : null}
+        </Box>
+        <Box
+          onClick={() => setId("4")}
+          layoutId="4"
+          style={{ position: "relative" }}
+          whileHover={{
+            scale: 1.05,
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+          }}
+        />
+      </Grid>
+
+      <AnimatePresence>
+        {id ? (
+          <Overlay
+            onClick={() => setId(null)}
+            initial={{ backgroundColor: "rgba(0, 0, 0, 0)" }}
+            animate={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            exit={{ backgroundColor: "rgba(0, 0, 0, 0)" }}
+          >
+            <Box layoutId={id} style={{ width: 400, height: 200 }} />
+          </Overlay>
+        ) : null}
       </AnimatePresence>
-      <button onClick={prevPlease}>Prev</button>
-      <button onClick={nextPlease}>Next</button>
+      <button onClick={toggleClicked} style={{ marginTop: 20 }}>
+        Swtich
+      </button>
     </Wrapper>
   );
 }
